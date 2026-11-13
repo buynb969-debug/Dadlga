@@ -9,7 +9,7 @@
   "scripts": {
     "build": "node --check dadlaga.mjs",
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy",
+    "deploy": "wrangler d1 migrations apply DB --remote && wrangler deploy",
     "db:setup": "wrangler d1 migrations apply DB --remote"
   },
   "devDependencies": {

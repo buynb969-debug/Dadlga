@@ -12,11 +12,12 @@ ZIP-ийг задлаад доторх 8 файлыг GitHub-ийн Add file →
 
 1. Node.js 22 буюу түүнээс шинэ хувилбарт npm install ажиллуулна.
 2. npx wrangler login гэж Cloudflare бүртгэлээрээ нэвтэрнэ.
-3. npx wrangler d1 create dadlaga ажиллуулж, буцаасан database_id-г wrangler.jsonc доторх 00000000-0000-0000-0000-000000000000 утгын оронд бичнэ.
+3. Ашиглах D1 өгөгдлийн сан: dadlga (ee2adafb-0360-4235-9a58-7f03d4cad040). Энэ өгөгдлийн сан тохиргоонд холбогдсон; дараагийн алхамд хүснэгтүүдийг үүсгэнэ.
 4. npx wrangler r2 bucket create dadlaga-files ажиллуулна. R2 идэвхжүүлсэн бүртгэл шаардлагатай.
-5. npm run db:setup ажиллуулж өгөгдлийн сангийн хүснэгтүүдийг үүсгэнэ.
-6. npm run deploy ажиллуулна.
-7. Cloudflare-ийн Worker → Settings → Variables and Secrets хэсэгт AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD_HASH, SITE_URL утгуудыг тохируулна. ADMIN_EMAIL нь админы и-мэйл; SITE_URL нь нийтлэгдсэн сайтын үндсэн https холбоос байна. AUTH_SECRET болон ADMIN_PASSWORD_HASH-ийг Secret төрлөөр оруулна.
+5. npm run deploy ажиллуулна. Энэ команд эхлээд хүлээгдэж буй D1 migration-уудыг хэрэглэж хүснэгтүүдийг үүсгээд, дараа нь Worker-ийг нийтэлнэ. CI/CD орчинд Wrangler баталгаажуулалтын асуултыг автоматаар алгасана.
+6. Cloudflare-ийн Worker → Settings → Variables and Secrets хэсэгт AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD_HASH, SITE_URL утгуудыг тохируулна. ADMIN_EMAIL нь админы и-мэйл; SITE_URL нь нийтлэгдсэн сайтын үндсэн https холбоос байна (төгсгөлд / тэмдэггүй). AUTH_SECRET болон ADMIN_PASSWORD_HASH-ийг Secret төрлөөр оруулна.
+
+Cloudflare-ийн GitHub холболтоор нийтлэхэд Build command нь npm run build, Deploy command нь npm run deploy байна. Ингэснээр өгөгдлийн сангийн schema нийтлэхээс өмнө хэрэглэгдэнэ.
 
 Нууц тохиргоог эх кодод болон GitHub-д оруулахгүй. prepare-secrets.mjs туслахыг node prepare-secrets.mjs гэж ажиллуулаад админы нууц үгээ интерактив оруулахад adminHash, authSecret утгууд үүснэ. Эдгээрийг зөвхөн Worker-ийн Secret тохиргоонд хадгална. Нууц үг бичихэд терминалын тэмдэгт харагдах боломжтой тул хувийн терминалд ашиглана.
 

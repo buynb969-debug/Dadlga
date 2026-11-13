@@ -8,8 +8,8 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "dadlaga",
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_name": "dadlga",
+      "database_id": "ee2adafb-0360-4235-9a58-7f03d4cad040",
       "migrations_dir": "."
     }
   ],
@@ -18,5 +18,6 @@
       "binding": "BUCKET",
       "bucket_name": "dadlaga-files"
     }
-  ]
+  ],
+  "account_id": "1c3e4842d2f75eadf61d62befc663a4c"
 }
