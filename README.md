@@ -1,23 +1,25 @@
-# Дадлага
+# Дадлага — хавтасгүй хувилбар
 
-ҮУПК-ийн дадлагын дэвтрийг цахимжуулсан Монгол хэлтэй портал. Vinext, React, Better Auth, Drizzle/D1, R2 болон pdf-lib ашиглана.
+Энэ багц дотор зөвхөн 8 файл байна. Бүх код, загвар, лого, фонт, эх PDF болон браузерын JS/CSS нь dadlaga.mjs файл дотор багтсан. package-lock.json нь хамаарлын хувилбаруудыг, OFL.txt нь фонтын лицензийг агуулна.
 
-## Хөгжүүлэх
+Сервер нь Cloudflare Workers, өгөгдлийн сан нь D1, хувийн хавсралтын хадгалалт нь R2 ашиглана. Админ, дадлагажигчийн нэвтрэлт, хяналт, хадгалалт болон PDF тайлангийн ажиллагааг хадгалсан. Браузерт харагдах загвар нь анхны хувилбартай ижил.
 
-`npm ci`, `npm run check`, `npm run build` ажиллуулна. D1 схемийн өөрчлөлтөд `npm run db:generate` ашиглаж шинэ migration нэмнэ. Өмнө хэрэглэсэн migration-ыг өөрчлөхгүй.
+## GitHub-д оруулах
 
-Локал ажиллуулахад `.env.example`-ийг үл хянагдах `.dev.vars` файлд хуулж, `SITE_URL=http://localhost:4173` болон өөрийн нууц тохиргоог бөглөнө. Build хийсний дараа local D1-д migration бүрийг дарааллаар `node node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0000_brainy_timeslip.sql` гэж хэрэглээд `npm run dev` ажиллуулна. Production болон local өгөгдлийн сан тусдаа.
+ZIP-ийг задлаад доторх 8 файлыг GitHub-ийн Add file → Upload files → Choose your files хэсгээс хамтад нь сонгоно. Хавтас сонгох шаардлагагүй. Ижил нэртэй package.json, package-lock.json, wrangler.jsonc, README.md файлуудыг энэ хувилбараар шинэчилнэ. Commit changes дарна. Өмнө оруулсан бусад эх файлууд байж болно; энэ багцын deploy нь dadlaga.mjs-ийг ашиглана.
 
-Production нууц тохиргоог Sites-д хадгална. `.env.example` нь зөвхөн хувьсагчийн нэрсийг харуулна. Эх кодод нууц үг, session secret эсвэл credential хадгалахгүй. `scripts/prepare-secrets.mjs` нууц үгийг stdin-ээс авч Better Auth-ийн хэш үүсгэнэ. Анхны админы данс идемпотент seed-ээр нэг удаа үүсэх бөгөөд дахин нийтлэхэд өөрчилсөн нууц үгийг дарж бичихгүй.
+## Cloudflare дээр ажиллуулах
 
-## Шалгах
+1. Node.js 22 буюу түүнээс шинэ хувилбарт npm install ажиллуулна.
+2. npx wrangler login гэж Cloudflare бүртгэлээрээ нэвтэрнэ.
+3. npx wrangler d1 create dadlaga ажиллуулж, буцаасан database_id-г wrangler.jsonc доторх 00000000-0000-0000-0000-000000000000 утгын оронд бичнэ.
+4. npx wrangler r2 bucket create dadlaga-files ажиллуулна. R2 идэвхжүүлсэн бүртгэл шаардлагатай.
+5. npm run db:setup ажиллуулж өгөгдлийн сангийн хүснэгтүүдийг үүсгэнэ.
+6. npm run deploy ажиллуулна.
+7. Cloudflare-ийн Worker → Settings → Variables and Secrets хэсэгт AUTH_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD_HASH, SITE_URL утгуудыг тохируулна. ADMIN_EMAIL нь админы и-мэйл; SITE_URL нь нийтлэгдсэн сайтын үндсэн https холбоос байна. AUTH_SECRET болон ADMIN_PASSWORD_HASH-ийг Secret төрлөөр оруулна.
 
-Build хийсний дараа `npm test` ажиллуулна. Suite нь түр Miniflare D1/R2 ашиглаж, бүртгэлийн зөвшөөрөл, серверийн эрх, хадгалалт, хяналтын урсгал, оноо, хувийн хавсралт, нууц үг шинэчлэлт, PDF үүсгэлтийг шалгана. Production өгөгдөлд хандахгүй. Туршилтын PDF `outputs/test-report.pdf` үүснэ.
+Нууц тохиргоог эх кодод болон GitHub-д оруулахгүй. prepare-secrets.mjs туслахыг node prepare-secrets.mjs гэж ажиллуулаад админы нууц үгээ интерактив оруулахад adminHash, authSecret утгууд үүснэ. Эдгээрийг зөвхөн Worker-ийн Secret тохиргоонд хадгална. Нууц үг бичихэд терминалын тэмдэгт харагдах боломжтой тул хувийн терминалд ашиглана.
 
-## Нийтлэх
+GitHub нь кодыг хадгална. Энэ нь Cloudflare Workers дээр ажиллах серверийн багц бөгөөд GitHub Pages эсвэл Netlify-ийн статик upload болгон шууд ажиллуулах тохиргоо агуулаагүй.
 
-Sites-ийн project ID `.openai/hosting.json`-д хадгалагдана. Worker entry `dist/server/index.js`, статик файлууд `dist/client`, D1 migration-ууд `drizzle/` байна. Source commit-ыг холбоотой repository руу push хийсний дараа `.openai/hosting.json`, `dist/`, `drizzle/` агуулсан архивыг Sites-д хадгалж нийтэлнэ. Энэ орчинд Sites-ийн локал source/build helper суулгагдаагүй тул ижил supported artifact форматыг framework build ба `scripts/sync-source.mjs`-ээр бэлтгэдэг. Credential зөвхөн stdin болон Git процессын environment-д дамжина.
-
-Одоогийн нийтлэлт: source credential шинэчлэх native үйлдэл `sites_git_client_upgrade_required` алдаатай буцсан. Site үүссэн, runtime тохиргоо хадгалагдсан; source push, version save, deploy болон public access хараахан хийгдээгүй. Дэмжигдэх hosted Work эсвэл шинэчлэгдсэн клиентээс одоо байгаа project ID-г ашиглан credential авч, source push → version save → public access → deploy урсгалыг үргэлжлүүлнэ. Шинэ Site үүсгэхгүй. Browser QA tool энэ орчинд байхгүй тул харагдац браузераар шалгагдаагүй.
-
-Эх PDF, лого болон Монгол үсгийн Noto Sans фонтууд `public/assets`-д орсон. PDF-д PNG/JPEG зураг оруулж, WebP/PDF хавсралтын нэрсийг жагсаана. Бүх эх хавсралтыг эрхийн шалгалттайгаар татаж авна.
+Noto Sans фонтуудын SIL Open Font License нь сайтын /assets/OFL.txt хаягт, эх дадлагын дэвтэр нь /assets/dadlagyn-devter.pdf хаягт агуулагдана.
